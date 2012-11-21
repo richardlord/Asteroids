@@ -18,16 +18,15 @@ This project contains four versions of the same game.
 
 ## Ash
 
-For more information on Ash, [view the website](http://www.ashframework,org/), [checkout the source code](http://github.com/richardlord/Ash) and [join the mailing list](http://groups.google.com/group/ash-framework?hl=en).
+For more information on Ash, [view the website](http://www.ashframework.org/), [checkout the source code](http://github.com/richardlord/Ash) and [join the mailing list](http://groups.google.com/group/ash-framework?hl=en).
 
 ## License
 
-Asteroids - an example project built with Ash entity system framework
-.....................................................................
+__Asteroids - an example project built with Ash entity system framework__
 
-Author: Richard Lord
-Copyright (c) Richard Lord 2011-2012
-http://www.richardlord.net
+Author: Richard Lord  
+Copyright (c) Richard Lord 2011-2012  
+http://www.richardlord.net  
 
 Licence Agreement (The MIT License)
 

@@ -4,11 +4,13 @@ package net.richardlord.asteroids
 	import ash.tick.FrameTickProvider;
 
 	import net.richardlord.asteroids.systems.AnimationSystem;
+	import net.richardlord.asteroids.systems.AudioSystem;
 	import net.richardlord.asteroids.systems.BulletAgeSystem;
 	import net.richardlord.asteroids.systems.CollisionSystem;
 	import net.richardlord.asteroids.systems.DeathThroesSystem;
 	import net.richardlord.asteroids.systems.GameManager;
 	import net.richardlord.asteroids.systems.GunControlSystem;
+	import net.richardlord.asteroids.systems.HudSystem;
 	import net.richardlord.asteroids.systems.MotionControlSystem;
 	import net.richardlord.asteroids.systems.MovementSystem;
 	import net.richardlord.asteroids.systems.RenderSystem;
@@ -49,7 +51,9 @@ package net.richardlord.asteroids
 			engine.addSystem( new MovementSystem( config ), SystemPriorities.move );
 			engine.addSystem( new CollisionSystem( creator ), SystemPriorities.resolveCollisions );
 			engine.addSystem( new AnimationSystem(), SystemPriorities.animate );
+			engine.addSystem( new HudSystem(), SystemPriorities.animate );
 			engine.addSystem( new RenderSystem( container ), SystemPriorities.render );
+			engine.addSystem( new AudioSystem(), SystemPriorities.render );
 			
 			creator.createGame();
 		}

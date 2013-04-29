@@ -6,6 +6,7 @@ package net.richardlord.asteroids
 
 	import net.richardlord.asteroids.components.Animation;
 	import net.richardlord.asteroids.components.Asteroid;
+	import net.richardlord.asteroids.components.Audio;
 	import net.richardlord.asteroids.components.Bullet;
 	import net.richardlord.asteroids.components.Collision;
 	import net.richardlord.asteroids.components.DeathThroes;
@@ -13,12 +14,15 @@ package net.richardlord.asteroids
 	import net.richardlord.asteroids.components.GameState;
 	import net.richardlord.asteroids.components.Gun;
 	import net.richardlord.asteroids.components.GunControls;
+	import net.richardlord.asteroids.components.Hud;
 	import net.richardlord.asteroids.components.Motion;
 	import net.richardlord.asteroids.components.MotionControls;
 	import net.richardlord.asteroids.components.Position;
 	import net.richardlord.asteroids.components.Spaceship;
+	import net.richardlord.asteroids.graphics.AsteroidDeathView;
 	import net.richardlord.asteroids.graphics.AsteroidView;
 	import net.richardlord.asteroids.graphics.BulletView;
+	import net.richardlord.asteroids.graphics.HudView;
 	import net.richardlord.asteroids.graphics.SpaceshipDeathView;
 	import net.richardlord.asteroids.graphics.SpaceshipView;
 
@@ -40,20 +44,39 @@ package net.richardlord.asteroids
 		
 		public function createGame() : Entity
 		{
-			var gameEntity : Entity = new Entity()
-				.add( new GameState() );
+			var hud : HudView = new HudView();
+			var gameEntity : Entity = new Entity( "game" )
+				.add( new GameState() )
+				.add( new Hud( hud ) )
+				.add( new Display( hud ) )
+				.add( new Position( 0, 0, 0 ) );
 			engine.addEntity( gameEntity );
 			return gameEntity;
 		}
 
 		public function createAsteroid( radius : Number, x : Number, y : Number ) : Entity
 		{
-			var asteroid : Entity = new Entity()
-				.add( new Asteroid() )
+			var asteroid : Entity = new Entity();
+			
+			var fsm : EntityStateMachine = new EntityStateMachine( asteroid );
+			
+			fsm.createState( "alive" )
+				.add( Motion ).withInstance( new Motion( ( Math.random() - 0.5 ) * 4 * ( 50 - radius ), ( Math.random() - 0.5 ) * 4 * ( 50 - radius ), Math.random() * 2 - 1, 0 ) )
+				.add( Collision ).withInstance( new Collision( radius ) )
+				.add( Display ).withInstance( new Display( new AsteroidView( radius ) ) );
+			
+			var deathView : AsteroidDeathView = new AsteroidDeathView( radius );
+			fsm.createState( "destroyed" )
+				.add( DeathThroes ).withInstance( new DeathThroes( 3 ) )
+				.add( Display ).withInstance( new Display( deathView ) )
+				.add( Animation ).withInstance( new Animation( deathView ) );
+			
+			asteroid
+				.add( new Asteroid( fsm ) )
 				.add( new Position( x, y, 0 ) )
-				.add( new Collision( radius ) )
-				.add( new Motion( ( Math.random() - 0.5 ) * 4 * ( 50 - radius ), ( Math.random() - 0.5 ) * 4 * ( 50 - radius ), Math.random() * 2 - 1, 0 ) )
-				.add( new Display( new AsteroidView( radius ) ) );
+				.add( new Audio );
+				
+			fsm.changeState( "alive" );
 			engine.addEntity( asteroid );
 			return asteroid;
 		}
@@ -77,7 +100,10 @@ package net.richardlord.asteroids
 				.add( Display ).withInstance( new Display( deathView ) )
 				.add( Animation ).withInstance( new Animation( deathView ) );
 			
-			spaceship.add( new Spaceship( fsm ) ).add( new Position( 300, 225, 0 ) );
+			spaceship
+				.add( new Spaceship( fsm ) )
+				.add( new Position( 300, 225, 0 ) )
+				.add( new Audio() );
 				
 			fsm.changeState( "playing" );
 			engine.addEntity( spaceship );

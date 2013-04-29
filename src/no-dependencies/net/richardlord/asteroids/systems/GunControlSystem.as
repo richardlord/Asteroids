@@ -32,6 +32,7 @@ package net.richardlord.asteroids.systems
 			if ( gun.shooting && gun.timeSinceLastShot >= gun.minimumShotInterval )
 			{
 				creator.createUserBullet( gun, position );
+				node.audio.play( ShootGun );
 				gun.timeSinceLastShot = 0;
 			}
 		}

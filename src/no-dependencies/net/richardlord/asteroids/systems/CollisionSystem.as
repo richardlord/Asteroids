@@ -3,16 +3,20 @@ package net.richardlord.asteroids.systems
 	import ash.core.Engine;
 	import ash.core.NodeList;
 	import ash.core.System;
-	import flash.geom.Point;
+
 	import net.richardlord.asteroids.EntityCreator;
 	import net.richardlord.asteroids.nodes.AsteroidCollisionNode;
 	import net.richardlord.asteroids.nodes.BulletCollisionNode;
+	import net.richardlord.asteroids.nodes.GameNode;
 	import net.richardlord.asteroids.nodes.SpaceshipCollisionNode;
+
+	import flash.geom.Point;
 
 	public class CollisionSystem extends System
 	{
 		private var creator : EntityCreator;
 		
+		private var games : NodeList;
 		private var spaceships : NodeList;
 		private var asteroids : NodeList;
 		private var bullets : NodeList;
@@ -24,6 +28,7 @@ package net.richardlord.asteroids.systems
 
 		override public function addToEngine( engine : Engine ) : void
 		{
+			games = engine.getNodeList( GameNode );
 			spaceships = engine.getNodeList( SpaceshipCollisionNode );
 			asteroids = engine.getNodeList( AsteroidCollisionNode );
 			bullets = engine.getNodeList( BulletCollisionNode );
@@ -47,7 +52,12 @@ package net.richardlord.asteroids.systems
 							creator.createAsteroid( asteroid.collision.radius - 10, asteroid.position.position.x + Math.random() * 10 - 5, asteroid.position.position.y + Math.random() * 10 - 5 );
 							creator.createAsteroid( asteroid.collision.radius - 10, asteroid.position.position.x + Math.random() * 10 - 5, asteroid.position.position.y + Math.random() * 10 - 5 );
 						}
-						creator.destroyEntity( asteroid.entity );
+						asteroid.asteroid.fsm.changeState( "destroyed" );
+						asteroid.audio.play( ExplodeAsteroid );
+						if( games.head )
+						{
+							games.head.state.hits++;
+						}
 						break;
 					}
 				}
@@ -60,6 +70,11 @@ package net.richardlord.asteroids.systems
 					if ( Point.distance( asteroid.position.position, spaceship.position.position ) <= asteroid.collision.radius + spaceship.collision.radius )
 					{
 						spaceship.spaceship.fsm.changeState( "destroyed" );
+						spaceship.audio.play( ExplodeShip );
+						if( games.head )
+						{
+							games.head.state.lives--;
+						}
 						break;
 					}
 				}

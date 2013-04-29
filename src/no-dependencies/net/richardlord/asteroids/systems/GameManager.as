@@ -57,7 +57,6 @@ package net.richardlord.asteroids.systems
 						if( clearToAddSpaceship )
 						{
 							creator.createSpaceship();
-							node.state.lives--;
 						}
 					}
 					else

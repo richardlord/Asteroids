@@ -37,8 +37,8 @@ package net.richardlord.asteroids.systems
 		
 		override public function update( time : Number ) : void
 		{
-			var node : GameNode;
-			for( node = gameNodes.head; node; node = node.next )
+			var node : GameNode = gameNodes.head;
+			if( node && node.state.playing )
 			{
 				if( spaceships.empty )
 				{
@@ -61,7 +61,8 @@ package net.richardlord.asteroids.systems
 					}
 					else
 					{
-						// game over
+						node.state.playing = false;
+						creator.createWaitForClick();
 					}
 				}
 				

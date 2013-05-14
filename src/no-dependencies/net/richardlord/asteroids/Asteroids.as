@@ -15,6 +15,7 @@ package net.richardlord.asteroids
 	import net.richardlord.asteroids.systems.MovementSystem;
 	import net.richardlord.asteroids.systems.RenderSystem;
 	import net.richardlord.asteroids.systems.SystemPriorities;
+	import net.richardlord.asteroids.systems.WaitForStartSystem;
 	import net.richardlord.input.KeyPoll;
 
 	import flash.display.DisplayObjectContainer;
@@ -43,6 +44,7 @@ package net.richardlord.asteroids
 			config.width = width;
 			config.height = height;
 
+			engine.addSystem( new WaitForStartSystem( creator ), SystemPriorities.preUpdate );
 			engine.addSystem( new GameManager( creator, config ), SystemPriorities.preUpdate );
 			engine.addSystem( new MotionControlSystem( keyPoll ), SystemPriorities.update );
 			engine.addSystem( new GunControlSystem( keyPoll, creator ), SystemPriorities.update );
@@ -55,6 +57,7 @@ package net.richardlord.asteroids
 			engine.addSystem( new RenderSystem( container ), SystemPriorities.render );
 			engine.addSystem( new AudioSystem(), SystemPriorities.render );
 			
+			creator.createWaitForClick();
 			creator.createGame();
 		}
 		

@@ -1,5 +1,6 @@
 package net.richardlord.asteroids
 {
+	import net.richardlord.asteroids.graphics.WaitForStartView;
 	import ash.core.Engine;
 	import ash.core.Entity;
 	import ash.fsm.EntityStateMachine;
@@ -19,6 +20,7 @@ package net.richardlord.asteroids
 	import net.richardlord.asteroids.components.MotionControls;
 	import net.richardlord.asteroids.components.Position;
 	import net.richardlord.asteroids.components.Spaceship;
+	import net.richardlord.asteroids.components.WaitForStart;
 	import net.richardlord.asteroids.graphics.AsteroidDeathView;
 	import net.richardlord.asteroids.graphics.AsteroidView;
 	import net.richardlord.asteroids.graphics.BulletView;
@@ -31,6 +33,7 @@ package net.richardlord.asteroids
 	public class EntityCreator
 	{
 		private var engine : Engine;
+		private var waitEntity : Entity;
 		
 		public function EntityCreator( engine : Engine )
 		{
@@ -45,6 +48,7 @@ package net.richardlord.asteroids
 		public function createGame() : Entity
 		{
 			var hud : HudView = new HudView();
+			
 			var gameEntity : Entity = new Entity( "game" )
 				.add( new GameState() )
 				.add( new Hud( hud ) )
@@ -52,6 +56,22 @@ package net.richardlord.asteroids
 				.add( new Position( 0, 0, 0 ) );
 			engine.addEntity( gameEntity );
 			return gameEntity;
+		}
+		
+		public function createWaitForClick() : Entity
+		{
+			if( !waitEntity )
+			{
+				var waitView : WaitForStartView = new WaitForStartView();
+				
+				waitEntity = new Entity( "wait" )
+					.add( new WaitForStart( waitView ) )
+					.add( new Display( waitView ) )
+					.add( new Position( 0, 0, 0 ) );
+			}
+			WaitForStart( waitEntity.get( WaitForStart ) ).startGame = false;
+			engine.addEntity( waitEntity );
+			return waitEntity;
 		}
 
 		public function createAsteroid( radius : Number, x : Number, y : Number ) : Entity

@@ -18,7 +18,7 @@ This project contains four versions of the same game.
 
 ## Ash
 
-For more information on Ash, [view the website](http://www.ashframework.org/), [checkout the source code](http://github.com/richardlord/Ash) and [join the mailing list](http://groups.google.com/group/ash-framework?hl=en).
+For more information on Ash, [view the website](http://www.richardlord.net/ash/), [checkout the source code](http://github.com/richardlord/Ash) and [join the mailing list](http://groups.google.com/group/ash-framework?hl=en).
 
 ## License
 

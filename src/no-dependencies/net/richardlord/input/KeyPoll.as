@@ -56,14 +56,8 @@ package net.richardlord.input
 		public function KeyPoll( displayObj:DisplayObject )
 		{
 			states = new ByteArray();
-			states.writeUnsignedInt( 0 );
-			states.writeUnsignedInt( 0 );
-			states.writeUnsignedInt( 0 );
-			states.writeUnsignedInt( 0 );
-			states.writeUnsignedInt( 0 );
-			states.writeUnsignedInt( 0 );
-			states.writeUnsignedInt( 0 );
-			states.writeUnsignedInt( 0 );
+			for (var i:int = 0; i < 8; ++i)
+				states.writeUnsignedInt( 0 );
 			dispObj = displayObj;
 			dispObj.addEventListener( KeyboardEvent.KEY_DOWN, keyDownListener, false, 0, true );
 			dispObj.addEventListener( KeyboardEvent.KEY_UP, keyUpListener, false, 0, true );
@@ -73,27 +67,35 @@ package net.richardlord.input
 		
 		private function keyDownListener( ev:KeyboardEvent ):void
 		{
-			states[ ev.keyCode >>> 3 ] |= 1 << (ev.keyCode & 7);
+			var pos:uint = states.position = ev.keyCode >>> 3;
+			var lead:uint = states.readUnsignedInt();
+			states.position = pos;
+			states.writeUnsignedInt(lead | (1 << (ev.keyCode & 7)));
 		}
 		
 		private function keyUpListener( ev:KeyboardEvent ):void
 		{
-			states[ ev.keyCode >>> 3 ] &= ~(1 << (ev.keyCode & 7));
+			var pos:uint = states.position = ev.keyCode >>> 3;
+			var lead:uint = states.readUnsignedInt();
+			states.position = pos;
+			states.writeUnsignedInt(lead & ~(1 << (ev.keyCode & 7)));
 		}
 		
 		private function activateListener( ev:Event ):void
 		{
+			states.position = 0;
 			for( var i:int = 0; i < 8; ++i )
 			{
-				states[ i ] = 0;
+				states.writeUnsignedInt(0);
 			}
 		}
 
 		private function deactivateListener( ev:Event ):void
 		{
+			states.position = 0;
 			for( var i:int = 0; i < 8; ++i )
 			{
-				states[ i ] = 0;
+				states.writeUnsignedInt(0);
 			}
 		}
 		
@@ -108,7 +110,9 @@ package net.richardlord.input
 		 */
 		public function isDown( keyCode:uint ):Boolean
 		{
-			return ( states[ keyCode >>> 3 ] & (1 << (keyCode & 7)) ) != 0;
+			states.position = keyCode >>> 3;
+			var lead:uint = states.readUnsignedInt();
+			return ( lead & (1 << (keyCode & 7)) ) != 0;
 		}
 		
 		/**
@@ -122,7 +126,9 @@ package net.richardlord.input
 		 */
 		public function isUp( keyCode:uint ):Boolean
 		{
-			return ( states[ keyCode >>> 3 ] & (1 << (keyCode & 7)) ) == 0;
+			states.position = keyCode >>> 3;
+			var lead:uint = states.readUnsignedInt();
+			return ( lead & (1 << (keyCode & 7)) ) == 0;
 		}
 	}
 }
